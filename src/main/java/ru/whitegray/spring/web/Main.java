@@ -7,7 +7,8 @@ public class Main {
         createAndFillDBs.createDB_TICKETS();
         createAndFillDBs.createDB_ORDER_ITEMS();
 
-
+        WorkWithDataDBs workWithDataDBs = new WorkWithDataDBs();
+        workWithDataDBs.mergeFilms();
 
 
 
