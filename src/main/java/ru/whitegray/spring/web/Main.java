@@ -3,19 +3,21 @@ package ru.whitegray.spring.web;
 public class Main {
     public static void main(String[] args) {
         CreateAndFillDBs createAndFillDBs = new CreateAndFillDBs();
+        createAndFillDBs.createDB_FILMS();
         createAndFillDBs.createDB_SEANSES();
         createAndFillDBs.createDB_TICKETS();
-        createAndFillDBs.createDB_ORDER_ITEMS();
 
         WorkWithDataDBs workWithDataDBs = new WorkWithDataDBs();
         workWithDataDBs.mergeFilms();
+        workWithDataDBs.longClearPause();
+        workWithDataDBs.cashForFilms();
+        workWithDataDBs.howManyVisitors();
 
 
 
-
-        createAndFillDBs.dropTable("ORDER_ITEMS");
-        createAndFillDBs.dropTable("SEANSES");
-        createAndFillDBs.dropTable("TICKETS");
+        workWithDataDBs.dropTable("TICKETS");
+        workWithDataDBs.dropTable("SEANSES");
+        workWithDataDBs.dropTable("FILMS");
 
     }
 

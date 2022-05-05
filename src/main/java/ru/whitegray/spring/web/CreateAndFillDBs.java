@@ -15,6 +15,76 @@ public class CreateAndFillDBs {
     Statement stmt = null;
     String sql;
 
+    public void createDB_FILMS() {
+        System.out.println("\n\n\nCreate table ORDER_ITEMS\n");
+        try {
+            Class.forName(JDBC_DRIVER);
+
+            System.out.println("Connecting to database...");
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
+            stmt = conn.createStatement();
+
+            System.out.println("Created table in given database...\n");
+
+            sql = "CREATE TABLE FILMS " +
+                    "(id INTEGER not NULL, " +
+                    " title VARCHAR(255), " +
+                    " duration time not NULL, " +
+                    " PRIMARY KEY ( id ))";
+            stmt.executeUpdate(sql);
+
+
+            System.out.println("Fill the table with data");
+            stmt = conn.createStatement();
+            sql = "INSERT INTO FILMS VALUES (1, 'One', '01:00:0')";
+            stmt.executeLargeUpdate(sql);
+            sql = "INSERT INTO FILMS VALUES (2, 'Two', '1:30:0')";
+            stmt.executeLargeUpdate(sql);
+            sql = "INSERT INTO FILMS VALUES (3, 'Three', '2:00:0')";
+            stmt.executeLargeUpdate(sql);
+            sql = "INSERT INTO FILMS VALUES (4, 'Four', '01:00:0')";
+            stmt.executeLargeUpdate(sql);
+            sql = "INSERT INTO FILMS VALUES (5, 'Five', '2:00:0')";
+            stmt.executeLargeUpdate(sql);
+            System.out.println("Inserted records into the table...");
+
+
+            System.out.println("Show c table");
+            sql = "SELECT * FROM FILMS";
+            ResultSet rs = stmt.executeQuery(sql);
+            System.out.println("-----------------\n" + rs + "\n-----------------");
+
+            System.out.println("\tID\tTITLE\tDURATION");
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String title = rs.getString("title");
+                Time duration = rs.getTime("duration");
+
+                // Display values
+                System.out.print("\t" +id);
+                System.out.print("\t" +title);
+                System.out.println("\t" +duration);
+            }
+
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        } finally {
+            try {
+                stmt.close();
+            } catch (SQLException se2) {
+            }
+            try {
+                conn.close();
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+    }
+
     public void createDB_SEANSES() {
         System.out.println("\n\n\nCreate table SEANSES\n");
         try {
@@ -28,59 +98,38 @@ public class CreateAndFillDBs {
 
             sql = "CREATE TABLE SEANSES " +
                     "(id INTEGER not NULL, " +
-                    " title VARCHAR(255), " +
-                    " duration numeric(3, 0) not NULL, " +
-                    " price numeric(8, 2) not NULL, " +
-                    "time_begin_seans timestamp default current_timestamp, " +
+                    " film_id INTEGER not null references films (id), " +
+                    " time_begin_seans timestamp default current_timestamp, " +
+                    " price  number (8, 2) not null, " +
                     " PRIMARY KEY ( id ))";
             stmt.executeUpdate(sql);
 
 
             System.out.println("Fill the table with data");
             stmt = conn.createStatement();
-            sql = "INSERT INTO SEANSES " + "VALUES (1, 'One', 60, 100.20, '2022-05-03 09:00:00')";
-
+            sql = "INSERT INTO SEANSES VALUES (1, 1,'2022-05-05 09:00:00' , 100.20)";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO SEANSES " + "VALUES (2, 'Two', 90, 200.20, '2022-05-03 09:10:00')";
-
+            sql = "INSERT INTO SEANSES VALUES (2, 3, '2022-05-05 10:00:00', 200.00)";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO SEANSES " + "VALUES (3, 'One', 60, 140.30, '2022-05-03 10:00:00')";
-
+            sql = "INSERT INTO SEANSES VALUES (3, 1, '2022-05-05 13:30:00', 102.30)";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO SEANSES " + "VALUES (4, 'Two', 90, 100.00, '2022-05-03 11:00:00')";
-
+            sql = "INSERT INTO SEANSES VALUES (4, 2, '2022-05-05 14:00:00', 150.20)";
             stmt.executeUpdate(sql);
-
-            sql = "INSERT INTO SEANSES " + "VALUES (5, 'Two', 90, 100.00, '2022-05-03 14:00:00')";
-
+            sql = "INSERT INTO SEANSES VALUES (5, 2, '2022-05-05 14:30:00', 120.20)";
             stmt.executeUpdate(sql);
-
-            sql = "INSERT INTO SEANSES " + "VALUES (6, 'Three', 120, 300.50, '2022-05-03 13:30:00')";
-
+            sql = "INSERT INTO SEANSES VALUES (6, 3, '2022-05-05 15:15:00', 300.20)";
             stmt.executeUpdate(sql);
-
-            sql = "INSERT INTO SEANSES " + "VALUES (7, 'One', 60, 100.20, '2022-05-03 12:00:00')";
-
+            sql = "INSERT INTO SEANSES VALUES (7, 5, '2022-05-05 16:00:00', 230.20)";
             stmt.executeUpdate(sql);
-
-            sql = "INSERT INTO SEANSES " + "VALUES (8, 'Three', 120, 303.20, '2022-05-03 14:00:00')";
-
+            sql = "INSERT INTO SEANSES VALUES (8, 4, '2022-05-05 17:05:00', 100.00)";
             stmt.executeUpdate(sql);
-
-            sql = "INSERT INTO SEANSES " + "VALUES (9, 'Four', 90, 400.20, '2022-05-03 16:00:00')";
-
+            sql = "INSERT INTO SEANSES VALUES (9, 3, '2022-05-05 18:00:00', 270.20)";
             stmt.executeUpdate(sql);
-
-            sql = "INSERT INTO SEANSES " + "VALUES (10, 'One', 60, 123.20, '2022-05-03 14:00:00')";
-
+            sql = "INSERT INTO SEANSES VALUES (10, 5, '2022-05-05 18:45:00', 250.00)";
             stmt.executeUpdate(sql);
-
-            sql = "INSERT INTO SEANSES " + "VALUES (11,'Two', 90, 230.20, '2022-05-03 17:00:00')";
-
+            sql = "INSERT INTO SEANSES VALUES (11, 4, '2022-05-05 19:00:00', 150.60)";
             stmt.executeUpdate(sql);
-
-            sql = "INSERT INTO SEANSES " + "VALUES (12, 'Five', 120, 500.20, '2022-05-03 19:20:00')";
-
+            sql = "INSERT INTO SEANSES VALUES (12, 2, '2022-05-05 20:00:00', 170.00)";
             stmt.executeUpdate(sql);
             System.out.println("Inserted records into the table...");
 
@@ -88,26 +137,20 @@ public class CreateAndFillDBs {
             System.out.println("Show c table");
             sql = "SELECT * FROM SEANSES";
             ResultSet rs = stmt.executeQuery(sql);
+            System.out.println("-----------------\n" + rs + "\n-----------------");
 
-            // STEP 4: Extract data from result set
             while (rs.next()) {
-                // Retrieve by column name
                 int id = rs.getInt("id");
-                String title = rs.getString("title");
-                int duration = rs.getInt("duration");
-                float price = rs.getFloat("price");
+                int film_id = rs.getInt("film_id");
                 Time time_begin_seans = rs.getTime("time_begin_seans");
+                float price = rs.getFloat("price");
 
-                // Display values
                 System.out.print("ID: " + id);
-                System.out.print(", title: " + title);
-                System.out.print(", duration: " + duration);
+                System.out.print(", title: " + film_id);
+                System.out.print(", duration: " + time_begin_seans);
                 System.out.print(", price: " + price);
-                System.out.println(", time_begin_seans: " + time_begin_seans);
             }
 
-            stmt.close();
-            conn.close();
         } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
@@ -115,17 +158,16 @@ public class CreateAndFillDBs {
             //Handle errors for Class.forName
             e.printStackTrace();
         } finally {
-            //finally block used to close resources
             try {
-                if (stmt != null) stmt.close();
+                stmt.close();
             } catch (SQLException se2) {
-            } // nothing we can do
+            }
             try {
-                if (conn != null) conn.close();
+                conn.close();
             } catch (SQLException se) {
                 se.printStackTrace();
-            } //end finally try
-        } //end try
+            }
+        }
     }
 
 
@@ -138,11 +180,11 @@ public class CreateAndFillDBs {
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
             stmt = conn.createStatement();
 
-            System.out.println("Created table in given database...");
+            System.out.println("Created table in given database...\n");
 
             sql = "CREATE TABLE TICKETS " +
                     "(id INTEGER not NULL, " +
-                    " number_ticket bigint  not null, " +
+                    " seans_id INTEGER not null references seanses (id), " +
                     " PRIMARY KEY ( id ))";
             stmt.executeUpdate(sql);
 
@@ -150,29 +192,29 @@ public class CreateAndFillDBs {
             System.out.println("Fill the table with data");
             stmt = conn.createStatement();
             for (int q = 1; q < 22; q++) {
-                sql = "INSERT INTO TICKETS " + "VALUES (" + q+ ", " + q+")";
+                int rand = 0;
+                while (rand == 0) {
+                    rand = (int) (Math.random() * 12);
+                }
+                sql = "INSERT INTO TICKETS VALUES (" + q + ", " + rand + ")";
                 stmt.executeUpdate(sql);
             }
             System.out.println("Inserted records into the table...");
 
 
-            System.out.println("Show c table");
+            System.out.println("Show tickets table");
             sql = "SELECT * FROM TICKETS";
             ResultSet rs = stmt.executeQuery(sql);
+            System.out.println("-----------------\n" + rs + "\n-----------------");
 
-            // STEP 4: Extract data from result set
             while (rs.next()) {
-                // Retrieve by column name
                 int id = rs.getInt("id");
-                int number_ticket = rs.getInt("number_ticket");
+                int seans_id = rs.getInt("seans_id");
 
-                // Display values
                 System.out.print("ID: " + id);
-                System.out.println(", number_ticket: " + number_ticket);
+                System.out.println(", seans_id: " + seans_id);
             }
 
-            stmt.close();
-            conn.close();
         } catch (SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
@@ -180,122 +222,17 @@ public class CreateAndFillDBs {
             //Handle errors for Class.forName
             e.printStackTrace();
         } finally {
-            //finally block used to close resources
             try {
-                if (stmt != null) stmt.close();
+                stmt.close();
             } catch (SQLException se2) {
-            } // nothing we can do
-            try {
-                if (conn != null) conn.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            } //end finally try
-        } //end try
-    }
- public void createDB_ORDER_ITEMS() {
-        System.out.println("\n\n\nCreate table ORDER_ITEMS\n");
-        try {
-            Class.forName(JDBC_DRIVER);
-
-            System.out.println("Connecting to database...");
-            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            stmt = conn.createStatement();
-
-            System.out.println("Created table in given database...");
-
-            sql = "CREATE TABLE ORDER_ITEMS " +
-                    "(id INTEGER not NULL, " +
-                    " seans_id          bigint not null references seanses (id), " +
-                    " ticket_id         bigint not null references tickets (id), " +
-                    " PRIMARY KEY ( id ))";
-            stmt.executeUpdate(sql);
-
-
-            System.out.println("Fill the table with data");
-            stmt = conn.createStatement();
-            for (int q = 1; q < 22; q++) {
-                int rand=0;
-                while (rand == 0) {
-                    rand = (int) (Math.random()*12);
-                }
-                System.out.println("rand = " + rand);
-                sql = "INSERT INTO ORDER_ITEMS " + "VALUES (" + q+ ", " + rand + ", " + q+")";
-                stmt.executeUpdate(sql);
             }
-            System.out.println("Inserted records into the table...");
-
-
-            System.out.println("Show c table");
-            sql = "SELECT * FROM ORDER_ITEMS";
-            ResultSet rs = stmt.executeQuery(sql);
-
-            // STEP 4: Extract data from result set
-            while (rs.next()) {
-                // Retrieve by column name
-                int id = rs.getInt("id");
-                long seans_id = rs.getLong("seans_id");
-                long ticket_id = rs.getLong("ticket_id");
-
-                // Display values
-                System.out.print("ID: " + id);
-                System.out.print(", seans_id: " + seans_id);
-                System.out.println(", ticket_id: " + ticket_id);
+            try {
+                conn.close();
+            } catch (SQLException se) {
+                se.printStackTrace();
             }
-
-            stmt.close();
-            conn.close();
-        } catch (SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-        } catch (Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        } finally {
-            //finally block used to close resources
-            try {
-                if (stmt != null) stmt.close();
-            } catch (SQLException se2) {
-            } // nothing we can do
-            try {
-                if (conn != null) conn.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            } //end finally try
-        } //end try
+        }
     }
 
-    public void dropTable(String tableName) {
-        try {
-            Class.forName(JDBC_DRIVER);
 
-            System.out.println("Connecting to database...");
-            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            stmt = conn.createStatement();
-
-            System.out.println("Drop table " + tableName + " in given database...");
-
-            sql = "DROP TABLE " + tableName;
-            stmt.executeUpdate(sql);
-            stmt.close();
-            conn.close();
-        } catch (SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-        } catch (Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        } finally {
-            //finally block used to close resources
-            try {
-                if (stmt != null) stmt.close();
-            } catch (SQLException se2) {
-            } // nothing we can do
-            try {
-                if (conn != null) conn.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            } //end finally try
-        } //end try
-        System.out.println("Table dropped");
-    }
 }
