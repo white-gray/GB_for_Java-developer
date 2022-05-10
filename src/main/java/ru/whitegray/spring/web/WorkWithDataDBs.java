@@ -28,26 +28,30 @@ public class WorkWithDataDBs {
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
             stmt = conn.createStatement();
 
-            sql = "SELECT f.title, s.time_begin_seans, f.duration, f2.title, s2.time_begin_seans, f2.duration" +
+            sql = "SELECT f.title, s.time_begin_seans, f.duration, s2.time_begin_seans, f2.duration, f2.duration" +
                     " FROM SEANSES s" +
                     " JOIN FILMS f ON s.film_id = f.id" +
-                    " JOIN SEANSES s2 ON s2.time_begin_seans > s.time_begin_seans and s2.time_begin_seans < (s.time_begin_seans, INTERVAL f.duration HOUR_SECOND)" +
+                    " JOIN SEANSES s2 ON s2.time_begin_seans > s.time_begin_seans and " +
+                    " s2.time_begin_seans < (s.time_begin_seans + INTERVAL 'f.duration' HOUR_MINUTE_SECOND)" +
                     " JOIN FILMS f2 ON s2.film_id = f2.id" +
                     " ORDER by s.time_begin_seans ASC";
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
-                int id = rs.getInt("id");
-                String title = rs.getString("title");
-                Time time_begin_seans = rs.getTime("time_begin_seans");
-                int duration = rs.getInt("duration");
-//                float price = rs.getFloat("price");
+                String f_title = rs.getString("f.title");
+                Time s_time_begin_seans = rs.getTime("s.time_begin_seans");
+                Time f_duration = rs.getTime("f.duration");
+                String f2_title = rs.getString("f2.title");
+                Time s2_time_begin_seans = rs.getTime("s2.time_begin_seans");
+                Time f2_duration = rs.getTime("f2.duration");
 
-                System.out.print("ID: " + id);
-                System.out.print(", title: " + title);
-                System.out.println(", time_begin_seans: " + time_begin_seans);
-                System.out.print(", duration: " + duration);
-//                System.out.print(", price: " + price);
+
+                System.out.print("Title first: " + f_title);
+                System.out.print(", first time_begin_seans : " + s_time_begin_seans);
+                System.out.print(", first_duration: " + f_duration);
+                System.out.print("Title second: " + f2_title);
+                System.out.print(", second time_begin_seans : " + s2_time_begin_seans);
+                System.out.print(", second: " + f2_duration);
             }
 
         } catch (SQLException se) {
@@ -83,7 +87,7 @@ public void longClearPause() {
         stmt = conn.createStatement();
 
         sql = "SELECT s1.id, s1.film_id, s1.time_begin_seans, f1.duration, " +
-                " TIMEDIFF( MIN(s2.time_begin_seans), DATEADD(s1.time_begin_seans, INTERVAL f1.duration HOUR_SECOND) ) AS BREAK " +
+                " TIMEDIFF( MIN(s2.time_begin_seans), DATEADD(s1.time_begin_seans, INTERVAL f1.duration HOUR_SECOND) ) AS BREACK " +
                 " FROM SEANSES s1"+
                 " JOIN FILMS f1 on s1.film_id = f1.id" +
                 " LEFT JOIN seanses s2 on s1.time_begin_seans < s2.time_begin_seans" +
@@ -93,15 +97,18 @@ public void longClearPause() {
         ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()) {
-            int id = rs.getInt("id");
-            int film_id = rs.getInt("film_id");
-            Time time_begin_seans = rs.getTime("time_begin_seans");
-            int duration = rs.getInt("duration");
+            int id = rs.getInt("s1.id");
+            int film_id = rs.getInt("s1.film_id");
+            Time time_begin_seans = rs.getTime("s1.time_begin_seans");
+            int duration = rs.getInt("f1.duration");
+            Time breack = rs.getTime("break");
+
 
             System.out.print("ID: " + id);
             System.out.print(", film_id: " + film_id);
             System.out.println(", time_begin_seans: " + time_begin_seans);
             System.out.print(", duration: " + duration);
+            System.out.print(", breack: " + breack);
         }
 
     } catch (SQLException se) {
@@ -151,15 +158,13 @@ public void cashForFilms() {
         ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()) {
-            int id = rs.getInt("id");
             int film_id = rs.getInt("film_id");
-            Time time_begin_seans = rs.getTime("time_begin_seans");
-            int duration = rs.getInt("duration");
+            int avg_buyed = rs.getInt("avg_buyed");
+            float total_price = rs.getFloat("total_price");
 
-            System.out.print("ID: " + id);
             System.out.print(", film_id: " + film_id);
-            System.out.println(", time_begin_seans: " + time_begin_seans);
-            System.out.print(", duration: " + duration);
+            System.out.print(", avg_buyed: " + avg_buyed);
+            System.out.print(", total_price: " + total_price);
         }
 
     } catch (SQLException se) {
@@ -195,7 +200,7 @@ public void howManyVisitors() {
         conn = DriverManager.getConnection(DB_URL, USER, PASS);
         stmt = conn.createStatement();
 
-        sql = "SELECT HOUR(s.time_begin_seans), SUM(price), COUNT(*) FROM seanses s" +
+        sql = "SELECT HOUR(s.time_begin_seans) AS TIME_INTERVAL, SUM(price) AS SUM_PRICE, COUNT(*) FROM seanses s AS CLIENTS" +
                 " JOIN tickets b on s.id = b.seans_id" +
                 " GROUP BY" +
                 " (HOUR(time_begin_seans) >= 9 AND HOUR(time_begin_seans) < 15)," +
@@ -205,15 +210,13 @@ public void howManyVisitors() {
         ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()) {
-            int id = rs.getInt("id");
-            Time time_begin_seans = rs.getTime("time_begin_seans");
-            float price = rs.getFloat("price");
-            String seans = rs.getString("seans");
+            Time time_interval = rs.getTime("TIME_INTERVAL");
+            int clients = rs.getInt("CLIENTS");
+            float sum_price = rs.getFloat("SUM_PRICE");
 
-            System.out.print("ID: " + id);
-            System.out.print(", time_begin_seans: " + time_begin_seans);
-            System.out.println(", price: " + price);
-            System.out.print(", seans: " + seans);
+            System.out.print("time_interval: " + time_interval);
+            System.out.print(", clients: " + clients);
+            System.out.println(", sum_price: " + sum_price);
         }
 
     } catch (SQLException se) {

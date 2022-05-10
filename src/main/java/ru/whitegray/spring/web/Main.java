@@ -9,9 +9,9 @@ public class Main {
 
         WorkWithDataDBs workWithDataDBs = new WorkWithDataDBs();
         workWithDataDBs.mergeFilms();
-        workWithDataDBs.longClearPause();
-        workWithDataDBs.cashForFilms();
-        workWithDataDBs.howManyVisitors();
+//        workWithDataDBs.longClearPause();
+//        workWithDataDBs.cashForFilms();
+//        workWithDataDBs.howManyVisitors();
 
 
 

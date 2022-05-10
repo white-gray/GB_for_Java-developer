@@ -16,7 +16,7 @@ public class CreateAndFillDBs {
     String sql;
 
     public void createDB_FILMS() {
-        System.out.println("\n\n\nCreate table ORDER_ITEMS\n");
+        System.out.println("\n\n\nCreate table FILMS\n");
         try {
             Class.forName(JDBC_DRIVER);
 
@@ -146,9 +146,9 @@ public class CreateAndFillDBs {
                 float price = rs.getFloat("price");
 
                 System.out.print("ID: " + id);
-                System.out.print(", title: " + film_id);
-                System.out.print(", duration: " + time_begin_seans);
-                System.out.print(", price: " + price);
+                System.out.print(", film_id: " + film_id);
+                System.out.print(", time_begin_seans: " + time_begin_seans);
+                System.out.println(", price: " + price);
             }
 
         } catch (SQLException se) {
