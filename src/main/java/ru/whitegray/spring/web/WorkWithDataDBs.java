@@ -28,11 +28,11 @@ public class WorkWithDataDBs {
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
             stmt = conn.createStatement();
 
-            sql = "SELECT f.title, s.time_begin_seans, f.duration, s2.time_begin_seans, f2.duration, f2.duration" +
+            sql = "SELECT f.title, s.time_begin_seans, f.duration, f2.title, s2.time_begin_seans, S2.DURATION" +
                     " FROM SEANSES s" +
                     " JOIN FILMS f ON s.film_id = f.id" +
-                    " JOIN SEANSES s2 ON s2.time_begin_seans > s.time_begin_seans and " +
-                    " s2.time_begin_seans < (s.time_begin_seans + INTERVAL 'f.duration' HOUR_MINUTE_SECOND)" +
+                    " JOIN SEANSES s2 ON s2.time_begin_seans < s.time_begin_seans " +
+//                    " and s2.time_begin_seans < (s.time_begin_seans + INTERVAL 'f.duration' HOUR_MINUTE_SECOND)" +
                     " JOIN FILMS f2 ON s2.film_id = f2.id" +
                     " ORDER by s.time_begin_seans ASC";
             ResultSet rs = stmt.executeQuery(sql);
@@ -92,7 +92,7 @@ public void longClearPause() {
                 " JOIN FILMS f1 on s1.film_id = f1.id" +
                 " LEFT JOIN seanses s2 on s1.time_begin_seans < s2.time_begin_seans" +
                 " GROUP BY s1.time_begin_seans" +
-                " HAVING TIME_TO_SEC(BREAK) > 60 * 30 " +
+                " HAVING TIME_TO_SEC(BREAСK) > 60 * 30 " +
                 " ORDER BY break DESC";
         ResultSet rs = stmt.executeQuery(sql);
 
@@ -145,26 +145,24 @@ public void cashForFilms() {
         conn = DriverManager.getConnection(DB_URL, USER, PASS);
         stmt = conn.createStatement();
 
-        sql = "(SELECT s.film_id, COUNT(*) AS TOTAL_ALL_TIME, COUNT(*) / COUNT(DISTINCT b.seans_id) AS avg_buyed," +
+        sql = "SELECT s.film_id, COUNT(s.film_id) AS TOTAL_ALL_TIME, COUNT(b.seans_id) AS avg_buyed," +
             "sum(s.price) as total_price " +
             "from seanses s " +
             "join tickets b on s.id = b.seans_id " +
             "GROUP BY s.film_id " +
-            "ORDER BY total_price DESC)" +
-            "UNION " +
-            "SELECT 'Итого', COUNT(*), COUNT(b.seans_id) / COUNT(DISTINCT b.seans_id), SUM(s.price) " +
-            "FROM seanses s " +
-            "JOIN tickets b on s.id = b.seans_id";
+            "ORDER BY total_price DESC";
         ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()) {
             int film_id = rs.getInt("film_id");
+            int total_all_time = rs.getInt("TOTAL_ALL_TIME");
             int avg_buyed = rs.getInt("avg_buyed");
             float total_price = rs.getFloat("total_price");
 
-            System.out.print(", film_id: " + film_id);
+            System.out.print("film_id: " + film_id);
+            System.out.print(", total_all_time: " + total_all_time);
             System.out.print(", avg_buyed: " + avg_buyed);
-            System.out.print(", total_price: " + total_price);
+            System.out.println(", total_price: " + total_price);
         }
 
     } catch (SQLException se) {
@@ -200,22 +198,22 @@ public void howManyVisitors() {
         conn = DriverManager.getConnection(DB_URL, USER, PASS);
         stmt = conn.createStatement();
 
-        sql = "SELECT HOUR(s.time_begin_seans) AS TIME_INTERVAL, SUM(price) AS SUM_PRICE, COUNT(*) FROM seanses s AS CLIENTS" +
-                " JOIN tickets b on s.id = b.seans_id" +
+        sql = "SELECT b.title AS TITLE HOUR(s.time_begin_seans) AS TIME_INTERVAL, SUM(price) AS SUM_PRICE, COUNT(*) FROM SEANSES s" +
+                " JOIN TICKETS b ON s.id = b.seans_id" +
                 " GROUP BY" +
-                " (HOUR(time_begin_seans) >= 9 AND HOUR(time_begin_seans) < 15)," +
-                " (HOUR(time_begin_seans) > 15 AND HOUR(time_begin_seans) < 18)," +
-                " (HOUR(time_begin_seans) > 18 AND HOUR(time_begin_seans) < 21)," +
-                " (HOUR(time_begin_seans) > 21 AND HOUR(time_begin_seans) < 00)";
+                " (TIME_INTERVAL >= 9 AND TIME_INTERVAL < 15)," +
+                " (TIME_INTERVAL > 15 AND TIME_INTERVAL < 18)," +
+                " (TIME_INTERVAL > 18 AND TIME_INTERVAL < 21)," +
+                " (TIME_INTERVAL > 21 AND TIME_INTERVAL < 00)";
         ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()) {
             Time time_interval = rs.getTime("TIME_INTERVAL");
-            int clients = rs.getInt("CLIENTS");
+            String title = rs.getString("TITLE");
             float sum_price = rs.getFloat("SUM_PRICE");
 
             System.out.print("time_interval: " + time_interval);
-            System.out.print(", clients: " + clients);
+            System.out.print(", title: " + title);
             System.out.println(", sum_price: " + sum_price);
         }
 
