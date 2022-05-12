@@ -1,7 +1,7 @@
 package ru.whitegray.spring.web;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         CreateAndFillDBs createAndFillDBs = new CreateAndFillDBs();
         createAndFillDBs.createDB_FILMS();
         createAndFillDBs.createDB_SEANSES();

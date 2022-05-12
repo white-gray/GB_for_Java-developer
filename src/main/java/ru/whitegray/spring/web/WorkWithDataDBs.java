@@ -28,12 +28,12 @@ public class WorkWithDataDBs {
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
             stmt = conn.createStatement();
 
-            sql = "SELECT f.title, s.time_begin_seans, f.duration, f2.title, s2.time_begin_seans, S2.DURATION" +
+            sql = "SELECT f.title, s.time_begin_seans, f.duration, f2.title, s2.time_begin_seans, f2.duration" +
                     " FROM SEANSES s" +
-                    " JOIN FILMS f ON s.film_id = f.id" +
-                    " JOIN SEANSES s2 ON s2.time_begin_seans < s.time_begin_seans " +
-//                    " and s2.time_begin_seans < (s.time_begin_seans + INTERVAL 'f.duration' HOUR_MINUTE_SECOND)" +
-                    " JOIN FILMS f2 ON s2.film_id = f2.id" +
+                    " JOIN FILMS f ON  f.id = s.film_id" +
+                    " JOIN SEANSES s2 ON s2.time_begin_seans > s.time_begin_seans " +
+                    " and s2.time_begin_seans < (s.time_begin_seans + INTERVAL f.duration MINUTE)" +
+                    " JOIN FILMS f2 ON f2.id = s2.film_id" +
                     " ORDER by s.time_begin_seans ASC";
             ResultSet rs = stmt.executeQuery(sql);
 
