@@ -271,3 +271,97 @@ public void howManyVisitors() {
     }
 
 }
+
+/*
+*  пример для MySQL (но расмотреть: указать цену за билет, а не сеанс!)
+*
+CREATE TABLE `film` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `duration` time,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `seans` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `film_id` int(11) NOT NULL,
+  `start` datetime,
+  `price` int(11),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`film_id`) REFERENCES `film` (`id`)
+);
+
+CREATE TABLE `bilet` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `seans_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`seans_id`) REFERENCES `seans`(`id`)
+);
+
+INSERT INTO `film` VALUES (1,'Aaa','01:00:00'),(2,'Bbb','01:30:00'),(3,'Ccc','02:00:00'),(4,'Ddd','01:20:00');
+INSERT INTO `seans` VALUES (1,1,'2005-08-12 09:00:00',100),(2,1,'2005-08-13 09:00:00',200),(3,1,'2005-08-14 10:00:00',300),(4,2,'2005-08-12 12:00:00',100),(5,2,'2005-08-12 18:00:00',100),(6,2,'2005-08-12 19:00:00',100),(7,3,'2005-08-12 09:30:00',150);
+INSERT INTO `bilet` VALUES (1,1),(2,1),(3,1),(4,1),(5,2),(6,2),(7,2),(8,2),(9,2),(10,2),(11,2),(12,2),(13,3),(14,3),(15,3),(16,4),(17,5),(18,6),(19,6),(20,7);
+
+-- Запросы
+
+select * from film;
+select * from seans;
+select * from bilet;
+
+-- ошибки в расписании (фильмы накладываются друг на друга), отсортированные по возрастанию времени.
+-- Выводить надо колонки «фильм 1», «время начала», «длительность», «фильм 2», «время начала», «длительность».
+select
+f.name,
+s.start,
+f.duration,
+f2.name,
+s2.start,
+s2.price
+from seans s
+join film f on s.film_id = f.id
+join seans s2 on s2.start > s.start and s2.start < date_add(s.start, interval f.duration HOUR_SECOND)
+join film f2 on s2.film_id = f2.id
+order by s.start asc;
+
+-- перерывы больше или равные 30 минут между фильмами, выводятся по уменьшению длительности перерыва.
+-- Выводить надо колонки «фильм 1», «время начала», «длительность», «время начала второго фильма», «длительность перерыва».
+select
+s1.id,
+s1.film_id,
+s1.start,
+f1.duration,
+timediff( min(s2.start), date_add(s1.start, interval f1.duration HOUR_SECOND) ) as break
+from seans s1
+join film f1 on s1.film_id = f1.id
+left join seans s2 on s1.start < s2.start
+group by s1.start
+HAVING time_to_sec(break) > 60 * 30
+ORDER BY break DESC;
+
+-- список фильмов, для каждого указано общее число посетителей за все время, среднее число зрителей за сеанс и общая сумма сбора по каждому, отсортированные по убыванию прибыли.
+-- Внизу таблицы должна быть строчка «итого», содержащая данные по всем фильмам сразу.
+(select
+s.film_id,
+count(*) as total_all_time,
+count(*) / count(distinct b.seans_id) as avg_buyed,
+sum(s.price) as total_price
+from seans s
+join bilet b on s.id = b.seans_id
+GROUP BY s.film_id
+ORDER BY total_price desc
+)
+union
+select "Итого", count(*), count(b.seans_id) / count(distinct b.seans_id), sum(s.price)
+from seans s
+join bilet b on s.id = b.seans_id;
+
+-- число посетителей и кассовые сборы, сгруппированные по времени начала фильма: с 9 до 15, с 15 до 18, с 18 до 21, с 21 до 00:00.
+select hour(s.start), sum(price), count(*) from seans s
+join bilet b on s.id = b.seans_id
+group by
+(hour(start) >= 9 and hour(start) < 15),
+(hour(start) > 15 and hour(start) < 18),
+(hour(start) > 18 and hour(start) < 21),
+(hour(start) > 21 and hour(start) < 00)
+*
+* */
