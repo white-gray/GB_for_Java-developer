@@ -10,33 +10,36 @@ import java.util.List;
 
 public class ToDo {
     private LearnSessionFactory learnSessionFactory;
-    private Session currentSession;
-    private Transaction currentTransaction;
-
 
     public void save(StudentDao studentDao) {
         learnSessionFactory.getCurrentSession().save(dtoToEntity(studentDao));
     }
-    public void update(Student student) {
-        learnSessionFactory.getCurrentSession().update(student);
+    public void update(StudentDao studentDao) {
+        learnSessionFactory.getCurrentSession().update(dtoToEntity(studentDao));
     }
-    public Student findById(String id) {
+
+    public StudentDao findById(String id) {
         Student student = (Student) learnSessionFactory.getCurrentSession().get(Student.class, id);
-        return student;
+        StudentDao studentDao = entityToDto(student);
+        return studentDao;
     }
-    public void delete(Student student) {
-        learnSessionFactory.getCurrentSession().delete(student);
+    public void delete(StudentDao studentDao) {
+        learnSessionFactory.getCurrentSession().delete(dtoToEntity(studentDao));
     }
-    public List<Student> findAll() {
-        List<Student> students = (List<Student>) learnSessionFactory.getCurrentSession().createQuery("from Student").list();
+    public void deleteById(String id) {
+        StudentDao studentDao = findById(id);
+        learnSessionFactory.getCurrentSession().delete(dtoToEntity(studentDao));
+    }
+
+    public List<StudentDao> findAll() {
+        List<StudentDao> students = (List<StudentDao>) learnSessionFactory.getCurrentSession().createQuery("SELECT * FROM Student").list();
         return students;
     }
     public void deleteAll() {
-        List<Student> entityList = findAll();
-        entityList.clear();
-//        for (Student entity : entityList) {
-//            delete(entity);
-//        }
+        List<StudentDao> entityList = findAll();
+        for (StudentDao entity : entityList) {
+            delete(entity);
+        }
     }
 
     public Student dtoToEntity(StudentDao studentDao) {

@@ -1,12 +1,8 @@
 package ru.whitegray;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import ru.whitegray.Dao.StudentDao;
 import ru.whitegray.Session.LearnSessionFactory;
 import ru.whitegray.ToDo.ToDo;
-
-import javax.xml.namespace.QName;
 
 public class LearnMain {
 
@@ -18,27 +14,25 @@ public class LearnMain {
         ToDo todo = new ToDo();
 //        Transaction transaction = session.beginTransaction();
 
+        /*
+        * добавить 1000 записей*/
         session.openCurrentSessionwithTransaction();
+        for (int q = 1; q <= 1000; q++) {
+            StudentDao studentDao = new StudentDao("Студент", "Student_" + q, (int) Math.random() * 42);
+            todo.save(studentDao);
+        }
+        session.closeCurrentSessionwithTransaction();
+        System.out.println("Now table is\n" + todo.findAll());
 
-//        for (int q = 1; q < 1001; q++) {
-//            String name = "Student_"+q;
-//            String surname = name;
-//        StudentDao name = new StudentDao("Студент", surname, (int)Math.random()*42);
-//        }
 
-        StudentDao student1 = new StudentDao("Студент", "student1", (int)Math.random()*42);
+        session.openCurrentSessionwithTransaction();
 
 
         System.out.println(todo.findAll());
+        todo.deleteById("12");
         todo.deleteAll();
-        todo.save(student1);
-        System.out.println("after clear teble" + todo.findAll());
+        System.out.println("After clear table\n" + todo.findAll());
 
-
-        todo.save(student1);
-//        sessitoon.getTransaction().commit();
-
-//        session.close();
         session.closeCurrentSessionwithTransaction();
     }
 
