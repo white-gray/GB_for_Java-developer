@@ -44,6 +44,10 @@ public class HelloWorld extends HttpServlet {
                 "<body>" +
                 "<h1>%s %s!!!</h1>" +
                 "</body></html>";
+        getService(response, text);
+    }
+
+    private void getService(HttpServletResponse response, String text) throws IOException {
         text = String.format(text, config.getInitParameter("name"),
                 config.getInitParameter("mname"));
         OutputStream outStream = response.getOutputStream();
