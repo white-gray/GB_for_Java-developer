@@ -1,10 +1,4 @@
-package ru.whitegray.Dao;
-import java.util.List;
-
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import ru.whitegray.Entity.Student;
-import ru.whitegray.Session.LearnSessionFactory;
+package ru.whitegray.dao;
 
 
 public class StudentDao {

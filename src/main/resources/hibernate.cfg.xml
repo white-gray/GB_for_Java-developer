@@ -16,7 +16,7 @@
         <property name="connection.password"></property>
         <property name="hibernate.hbm2ddl.auto">create</property>
         <!-- NOTE that after automapping with IDEA property username and password will delete -->
-        <mapping class="ru.whitegray.Entity.Student"/>
+        <mapping class="ru.whitegray.entity.Student"/>
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hbm2ddl.auto">update</property> -->
     </session-factory>

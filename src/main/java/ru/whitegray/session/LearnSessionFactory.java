@@ -1,4 +1,4 @@
-package ru.whitegray.Session;
+package ru.whitegray.session;
 
 
 import org.hibernate.Session;

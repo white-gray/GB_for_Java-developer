@@ -1,10 +1,8 @@
-package ru.whitegray.ToDo;
+package ru.whitegray.toDo;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import ru.whitegray.Dao.StudentDao;
-import ru.whitegray.Entity.Student;
-import ru.whitegray.Session.LearnSessionFactory;
+import ru.whitegray.dao.StudentDao;
+import ru.whitegray.entity.Student;
+import ru.whitegray.session.LearnSessionFactory;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package ru.whitegray.Entity;
+package ru.whitegray.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

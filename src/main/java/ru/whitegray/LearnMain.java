@@ -1,8 +1,8 @@
 package ru.whitegray;
 
-import ru.whitegray.Dao.StudentDao;
-import ru.whitegray.Session.LearnSessionFactory;
-import ru.whitegray.ToDo.ToDo;
+import ru.whitegray.dao.StudentDao;
+import ru.whitegray.session.LearnSessionFactory;
+import ru.whitegray.toDo.ToDo;
 
 public class LearnMain {
 
