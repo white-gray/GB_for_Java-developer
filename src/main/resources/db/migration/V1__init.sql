@@ -1,14 +1,14 @@
-create table products
+create table students
 (
     id         bigserial primary key,
     name      varchar(255),
     age      numeric(2, 0) not null
 );
 
-insert into products (name, age)
-values ('Вано', 42),
-       ('Диман', 42),
-       ('Клавдия', 36),
-       ('Серый', 42),
-       ('Алекс', 35),
-       ('Олежка', 33);
+insert into students (name, age)
+values ('Р’Р°РЅРѕ', 42),
+       ('Р”РёРјР°РЅ', 42),
+       ('РљР»Р°РІРєР°', 36),
+       ('РЎРµСЂС‹Р№', 42),
+       ('Р›РµС€Р°', 35),
+       ('Р“Р°СЂРёРє', 43);

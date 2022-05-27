@@ -1,6 +1,6 @@
 package ru.whitegray.spring.web.validators;
 
-import ru.whitegray.spring.web.dto.StudentDto;
+import ru.whitegray.spring.web.entities.Student;
 import ru.whitegray.spring.web.exceptions.ValidationException;
 import org.springframework.stereotype.Component;
 
@@ -10,12 +10,12 @@ import java.util.List;
 
 @Component
 public class StudentValidator {
-    public void validate(StudentDto studentDto) {
+    public void validate(Student student) {
         List<String> errors = new ArrayList<>();
-        if (studentDto.getAge().compareTo(BigDecimal.ONE) < 18) {
+        if (student.getAge().compareTo(BigDecimal.ONE) < 18) {
             errors.add("Возраст студента должен быть от 18 лет");
         }
-        if (studentDto.getName().isBlank()) {
+        if (student.getName().isBlank()) {
             errors.add("Сиудент не может быть безымянным");
         }
         if (!errors.isEmpty()) {

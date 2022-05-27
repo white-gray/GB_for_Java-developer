@@ -1,11 +1,5 @@
 package ru.whitegray.spring.web.controllers;
 
-import ru.whitegray.spring.web.exceptions.ResourceNotFoundException;
-import ru.whitegray.spring.web.converters.StudentConverter;
-import ru.whitegray.spring.web.dto.StudentDto;
-import ru.whitegray.spring.web.entities.Student;
-import ru.whitegray.spring.web.services.StudentsService;
-import ru.whitegray.spring.web.validators.StudentValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,15 +8,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.whitegray.spring.web.entities.Student;
+import ru.whitegray.spring.web.exceptions.ResourceNotFoundException;
+import ru.whitegray.spring.web.services.StudentsService;
+import ru.whitegray.spring.web.validators.StudentValidator;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/students")
+@RequestMapping("/rest_api/v1")
 @RequiredArgsConstructor
 @Tag(name = "Студенты", description = "Список студентов")
-public class StudentsController {
+public class Rest_Controller {
     private final StudentsService studentsService;
-    private final StudentConverter studentConverter;
     private final StudentValidator studentValidator;
 
     @Operation(
@@ -35,16 +35,8 @@ public class StudentsController {
             }
     )
     @GetMapping
-    public Page<StudentDto> getAllStudents(
-            @RequestParam(name = "p", defaultValue = "1") Integer page,
-            @RequestParam(name = "name", required = false) String name
-    ) {
-        if (page < 1) {
-            page = 1;
-        }
-        return studentsService.findAll(name, page).map(
-                p -> studentConverter.entityToDto(p)
-        );
+    public List<Student> getAllStudents() {
+        return studentsService.findAll();
     }
 
     @GetMapping("/{id}")
@@ -53,30 +45,26 @@ public class StudentsController {
             responses = {
                     @ApiResponse(
                             description = "Успешный ответ", responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = StudentDto.class))
+                            content = @Content(schema = @Schema(implementation = Student.class))
                     )
             }
     )
-    public StudentDto getStudentById(
+    public Student getStudentById(
             @PathVariable @Parameter(description = "Идентификатор студента", required = true) Long id
     ) {
-        Student student = studentsService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Student not found, id: " + id));
-        return studentConverter.entityToDto(student);
+        return studentsService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Student not found, id: " + id));
     }
 
     @PostMapping
-    public StudentDto saveNewStudent(@RequestBody StudentDto studentDto) {
-        studentValidator.validate(studentDto);
-        Student student = studentConverter.dtoToEntity(studentDto);
-        student = studentsService.save(student);
-        return studentConverter.entityToDto(student);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Student saveNewStudent(@RequestBody Student student) {
+        student.setId(null);
+        return studentsService.save(student);
     }
 
     @PutMapping
-    public StudentDto updateStudent(@RequestBody StudentDto studentDto) {
-        studentValidator.validate(studentDto);
-        Student student = studentsService.update(studentDto);
-        return studentConverter.entityToDto(student);
+    public Student updateStudent(@RequestBody Student student) {
+        return studentsService.update(student);
     }
 
     @DeleteMapping("/{id}")

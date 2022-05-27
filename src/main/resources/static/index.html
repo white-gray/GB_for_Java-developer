@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html ng-app="app">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
+    <script src="index.js"></script>
+</head>
+
+<body>
+<div class="container" ng-controller="indexController">
+
+    <h1>Список студентов</h1>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <td>Имя</td>
+            <td>Возраст</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="stud in StudentsList">
+            <td>{{stud.name}}</td>
+            <td>{{stud.age}}</td>
+            <td>
+                <button class="btn btn-outline-danger" ng-click="deleteStudentById(stud.id)">Удалить</button>
+                <button class="btn btn-outline-primary">Редактировать</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>Добавить сведения о новом студенте</h3>
+    <input type="text" ng-model="newStudent.name" id="inputName" class="form-control" placeholder="Укажите имя студента">
+    <p/>
+    <p/>
+
+    <input type="number" ng-model="newStudent.age" id="inputAge" class="form-control" placeholder="Укажите возраст студента">
+    <p/>
+
+    <button class="btn btn-primary" ng-click="createNewStudent(newStudent)">Добавить</button>
+
+
+</div>
+
+</body>
+</html>
